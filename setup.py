@@ -14,12 +14,12 @@ except ImportError:
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
-distutils.core.setup(name='Configo',
+distutils.core.setup(name='StartAppSync',
       version='0.0.1',
       description='Easy way to use existing JSON, XML or YAML config files from bash shell/scripts',
       author='Marian Ignev',
       author_email='m@ignev.net',
-      url='http://m.ignev.net/code/configo',
+      url='http://github.com/mignev/startappsync',
       packages=['startappsync'],
       long_description=read('README.md'),
       package_dir={"startappsync":"startappsync"},

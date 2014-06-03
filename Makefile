@@ -1,6 +1,6 @@
 help:
-	@echo "   install      to install Configo"
-	@echo "   uninstall    to uninstall Configo"
+	@echo "   install      to install StartAppSync"
+	@echo "   uninstall    to uninstall StartAppSync"
 	@echo "   clean        to clean build files"
 	@echo "   test         to run tests"
 	@echo "   deploy       to deploy new version on github and pypi"
@@ -24,7 +24,7 @@ uninstall: clean
 	@sudo rm installed_files.txt
 
 clean:
-	@sudo rm -rf Configo.egg*
+	@sudo rm -rf StartAppSync.egg*
 	@sudo rm -rf dist
 	@sudo rm -rf build
 	@find . -name *.pyc -type f -exec rm {} \;

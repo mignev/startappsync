@@ -1,10 +1,70 @@
 #!/usr/bin/env python
-import sys, os
+"""Usage:
+    startappsync [options]
+
+Options:
+  -h --help                show this help message and exit
+  --repo REPOPATH          the path that will watch
+  --from FROMPATH          the path that will watch
+  --to SSH_URL             ssh url to sync with
+  --version                show version and exit
+
+"""
+
+import sys, os, time
 sys.path.insert(0, os.path.dirname(os.getcwd()))
 
-
-def run():
-    pass
+from watchdog.observers import Observer
+from startappsync import App, StatappSyncHandler, version
+from docopt import docopt
 
 if __name__ == '__main__':
-    run()
+    use_app = True
+
+    arguments = docopt(__doc__, version=version)
+    # print arguments
+    # sys.exit()
+
+    if arguments['--from'] == None and arguments['--repo'] == None:
+        src = '.'
+
+    if arguments['--repo'] != None:
+        src = arguments['--repo']
+
+    if arguments['--from'] and arguments['--to']:
+        use_app = False
+        src = arguments['--from']
+        dest = arguments['--to']
+
+
+    if use_app:
+        app = App(repo=src)
+        if app.is_app():
+            src = app.src()
+            dest = app.dest()
+        else:
+            print "Uuuups ... I can't find StartApp Git repo here!"
+            print "If tyou want to see the useage please type this:"
+            print ""
+            print " startappsync --help"
+            print ""
+            sys.exit()
+
+    src = os.path.abspath(src)
+    src = "{0}/".format(src)
+
+    print "Hi Dude! I am StartAppSync :)"
+    print "Now I am looking for changes in '{0}' and I will sync them to '{1}'" \
+        .format(src, dest)
+
+    event_handler = StatappSyncHandler(src=src, dest=dest)
+    observer = Observer()
+    observer.schedule(event_handler, src, recursive=True)
+    observer.start()
+
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        observer.stop()
+    observer.join()
