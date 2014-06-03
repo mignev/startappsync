@@ -52,6 +52,13 @@ Fork the [Configo repo on GitHub](https://github.com/mignev/startappsync), make 
 
 # TODO
 
+- Add tests
+- Add to travis
+- Add rsync to dependencies and add toturial how to install it?
+- Make the documentation better
+- Upload the tool to pypi
+- Add README in Bulgarian
+
 # CHANGELOG
 
 ### 0.0.1:

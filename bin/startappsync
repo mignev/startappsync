@@ -15,7 +15,7 @@ import sys, os, time
 sys.path.insert(0, os.path.dirname(os.getcwd()))
 
 from watchdog.observers import Observer
-from startappsync import App, StatappSyncHandler, version
+from startappsync import App, StatappSyncHandler, version, rsync
 from docopt import docopt
 
 if __name__ == '__main__':
@@ -57,6 +57,7 @@ if __name__ == '__main__':
     print "Now I am looking for changes in '{0}' and I will sync them to '{1}'" \
         .format(src, dest)
 
+    rsync(src, dest)
     event_handler = StatappSyncHandler(src=src, dest=dest)
     observer = Observer()
     observer.schedule(event_handler, src, recursive=True)

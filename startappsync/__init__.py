@@ -63,7 +63,7 @@ class App():
         return url
 
 def rsync(source, destination):
-    _cmd = 'rsync -avz --rsh="ssh" --progress ' + source + ' ' + destination
+    _cmd = 'rsync -ahz --rsh="ssh" --delete ' + source + ' ' + destination
     cmd(_cmd)
 
 def cmd(cmd):
