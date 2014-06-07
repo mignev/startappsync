@@ -1,0 +1,10 @@
+##
+# pip install nose
+# pip install rednose
+##
+
+watchmedo shell-command \
+    --patterns="*.py;startappsync" \
+    --recursive \
+    --command='clear;nosetests --rednose' \
+    .

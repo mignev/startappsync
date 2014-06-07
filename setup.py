@@ -23,7 +23,12 @@ distutils.core.setup(name='StartAppSync',
       packages=['startappsync'],
       long_description=read('README.md'),
       package_dir={"startappsync":"startappsync"},
-      install_requires = ['docopt','watchdog','pathtools'],
+      install_requires = [
+      'docopt',
+      'watchdog',
+      'pathtools',
+      'gitpython==0.3.2.RC1'
+      ],
       scripts= ["bin/startappsync"],
       classifiers=[
           'Development Status :: 4 - Beta',

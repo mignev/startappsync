@@ -13,20 +13,32 @@ Options:
 
 import sys, os, time
 sys.path.insert(0, os.path.dirname(os.getcwd()))
+sys.path.insert(0, os.path.dirname(os.getcwd()) + '/startappsync')
 
-from watchdog.observers import Observer
+from git.exc import NoSuchPathError
+
 from startappsync import App, StatappSyncHandler, version, rsync
+from watchdog.observers import Observer
 from docopt import docopt
 
 if __name__ == '__main__':
-    use_app = True
-
     arguments = docopt(__doc__, version=version)
-    # print arguments
-    # sys.exit()
+
+    use_app = True
+    startappsync_test_env = os.getenv("STARTAPPSYNC_TEST_ENV", None)
+    startappsync_test_cwd = os.getenv("STARTAPPSYNC_TEST_CWD", None)
 
     if arguments['--from'] == None and arguments['--repo'] == None:
-        src = '.'
+        current_working_dir = os.getcwd()
+
+        """
+            FIXME: This is used by tests. I don't like this solution
+            I have to fix it!
+        """
+        if startappsync_test_env and startappsync_test_cwd:
+            src = startappsync_test_cwd
+        else:
+            src = current_working_dir
 
     if arguments['--repo'] != None:
         src = arguments['--repo']
@@ -38,34 +50,53 @@ if __name__ == '__main__':
 
 
     if use_app:
-        app = App(repo=src)
-        if app.is_app():
-            src = app.src()
-            dest = app.dest()
-        else:
-            print "Uuuups ... I can't find StartApp Git repo here!"
-            print "If tyou want to see the useage please type this:"
-            print ""
-            print " startappsync --help"
-            print ""
-            sys.exit()
+        try:
+            app = App(repo=src)
+            if app.has_repo():
+                # Let check if this repo has an app?
+                if app.is_app():
+                    src = app.src()
+                    dest = app.dest()
+                else:
+                    print "\nSorry Dude :( ... But I can't find StartApp App in the git config!\n"
+                    if app.has_remotes():
+                        print "I fond these StartApp repos:\n"
+                        remotes = app.remotes()
+                        for remote in remotes:
+                            print "{0} - {1}".format(remote.name, remote.url)
+
+                        print "\nIf you want to use some of them you have to type:"
+                        print "startappsync --set-remote <remote-name>\n"
+
+                    sys.exit(1)
+            else:
+                print "Uuuups ... I can't find StartApp Git repo here!"
+                print "If tyou want to see the usage please type this:"
+                print ""
+                print " startappsync --help"
+                print ""
+                sys.exit(1)
+        except NoSuchPathError:
+            print "Uuuups ... the directory you are looking for is not exist! :("
+            sys.exit(1)
 
     src = os.path.abspath(src)
     src = "{0}/".format(src)
 
     print "Hi Dude! I am StartAppSync :)"
-    print "Now I am looking for changes in '{0}' and I will sync them to '{1}'" \
+    print "Now I am looking for changes in '{0}' and ... \n I will sync them to '{1}'" \
         .format(src, dest)
 
-    rsync(src, dest)
-    event_handler = StatappSyncHandler(src=src, dest=dest)
-    observer = Observer()
-    observer.schedule(event_handler, src, recursive=True)
-    observer.start()
+    if not startappsync_test_env:
+        rsync(src, dest)
+        event_handler = StatappSyncHandler(src=src, dest=dest)
+        observer = Observer()
+        observer.schedule(event_handler, src, recursive=True)
+        observer.start()
 
-    try:
-        while True:
-            time.sleep(1)
-    except KeyboardInterrupt:
-        observer.stop()
-    observer.join()
+        try:
+            while True:
+                time.sleep(1)
+        except KeyboardInterrupt:
+            observer.stop()
+        observer.join()
