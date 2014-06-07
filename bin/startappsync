@@ -58,34 +58,33 @@ if __name__ == '__main__':
                     src = app.src()
                     dest = app.dest()
                 else:
-                    print "\nSorry Dude :( ... But I can't find StartApp App in the git config!\n"
+                    print("\nSorry Dude :( ... But I can't find StartApp App in the git config!\n")
                     if app.has_remotes():
-                        print "I fond these StartApp repos:\n"
+                        print("I fond these StartApp repos:\n")
                         remotes = app.remotes()
                         for remote in remotes:
-                            print "{0} - {1}".format(remote.name, remote.url)
+                            print("{0} - {1}".format(remote.name, remote.url))
 
-                        print "\nIf you want to use some of them you have to type:"
-                        print "startappsync --set-remote <remote-name>\n"
+                        print("\nIf you want to use some of them you have to type:")
+                        print("startappsync --set-remote <remote-name>\n")
 
                     sys.exit(1)
             else:
-                print "Uuuups ... I can't find StartApp Git repo here!"
-                print "If tyou want to see the usage please type this:"
-                print ""
-                print " startappsync --help"
-                print ""
+                print("Uuuups ... I can't find StartApp Git repo here!")
+                print("If tyou want to see the usage please type this:\n")
+                print(" startappsync --help\n")
                 sys.exit(1)
+
         except NoSuchPathError:
-            print "Uuuups ... the directory you are looking for is not exist! :("
+            print("Uuuups ... the directory you are looking for is not exist! :(")
             sys.exit(1)
 
     src = os.path.abspath(src)
     src = "{0}/".format(src)
 
-    print "Hi Dude! I am StartAppSync :)"
-    print "Now I am looking for changes in '{0}' and ... \n I will sync them to '{1}'" \
-        .format(src, dest)
+    print("Hi Dude! I am StartAppSync :)")
+    print("Now I am looking for changes in '{0}' and ... \n I will sync them to '{1}'" \
+        .format(src, dest))
 
     if not startappsync_test_env:
         rsync(src, dest)

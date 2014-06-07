@@ -1,6 +1,9 @@
 language: python
 python:
-  - 2.7
+  - "2.6"
+  - "2.7"
+  - "3.2"
+  - "3.3"
 install:
   - pip install -r requirements.txt --use-mirrors
   - python setup.py install
@@ -8,4 +11,4 @@ script:
   - cd tests
   - ln -s ../startappsync startappsync
   - ln -s ../bin bin
-  - nosetest
+  - nosetests
