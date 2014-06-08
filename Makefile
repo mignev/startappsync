@@ -8,12 +8,7 @@ help:
 test:
 	@echo "Run all tests"
 	@echo "---------"
-	@echo ""
-	@echo "Run API tests"
-	@python tests/configo_tests.py
-	@echo ""
-	@echo "Run CLI tests"
-	@python tests/configo_executable_tests.py
+	@nosetests --rednose
 
 install:
 	@echo "Installing"
