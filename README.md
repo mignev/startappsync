@@ -50,7 +50,7 @@ On Windows, please install [PyYAML](http://www.pyyaml.org/) using the binaries t
 
 
 # Contributing
-Fork the [Configo repo on GitHub](https://github.com/mignev/startappsync), make your super duper awesome changes :) and send me a Pull Request. :)
+Fork the [startappsync repo on GitHub](https://github.com/mignev/startappsync), make your super duper awesome changes :) and send me a Pull Request. :)
 
 
 
