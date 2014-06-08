@@ -2,12 +2,25 @@
 """Usage:
     startappsync [options]
 
+   Examples:
+
+     With startapp repo without arguments:
+      $ cd /path/to/startapprepo
+      $ startappsync
+
+     Use startappsync outside of startapp repo:
+      $ startappsync --repo /path/to/startapprepo
+
+     Without startapp repo:
+      $ startappsync --from /path/you/want/to/sync --to user@server.com:~/path/to/sync
+
+
 Options:
   -h --help                  show this help message and exit
   --repo REPOPATH            the path that will watch
   --from FROMPATH            the path that will watch
   --to SSH_URL               ssh url to sync with
-  --set-remote REMOTENAME    ssh url to sync with
+  --set-remote REMOTENAME    the name of Git remote
   --version                  show version and exit
 
 """
