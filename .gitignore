@@ -40,7 +40,6 @@ tests/startappsync
 venv
 
 .DS_Store
-.DS_Store
 dummyrepo
 dummyrepo_with_many_remotes
 dummyrepo_with_one_remote
