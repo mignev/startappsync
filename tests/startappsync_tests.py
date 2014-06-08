@@ -8,7 +8,18 @@ import re
 import subprocess
 import sys
 
-class StartAppSyncTest(unittest.TestCase):
+class TestCaseBase(unittest.TestCase):
+
+    # HACK: Backport for Python 2.6.
+    def assertRegexpMatches(self, value, regexp):
+        self.assertTrue(re.search(regexp, value))
+
+    # HACK: Backport for Python 2.6.
+    def assertNotIn(self, value, container):
+        self.assertFalse(value in container)
+
+
+class StartAppSyncTest(TestCaseBase):
     def setUp(self):
 
         if not re.search(r'/tests', os.getcwd()):
