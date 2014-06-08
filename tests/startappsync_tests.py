@@ -17,14 +17,20 @@ class StartAppSyncTest(unittest.TestCase):
             cwd = os.getcwd()
 
         self.no_repo = '{0}/fixtures/'.format(cwd)
+        self.empty_dir = '/tmp/empty_dir_with_no_git_repo'
         self.dummy_repo = '{0}/fixtures/dummyrepo'.format(cwd)
         self.dummy_repo_without_rhc_conf = '{0}/fixtures/dummyrepo_without_rhc_conf'.format(cwd)
         self.dummy_repo_with_one_remote = '{0}/fixtures/dummyrepo_with_one_remote'.format(cwd)
         self.dummy_repo_with_many_remotes = '{0}/fixtures/dummyrepo_with_many_remotes'.format(cwd)
 
+        os.system("mkdir {0}".format(self.empty_dir))
+
+    def tearDown(self):
+        os.system("rm -rf {0}".format(self.empty_dir))
+
     def cmd(self, *args):
         os.environ['STARTAPPSYNC_TEST_ENV'] = 'true'
-        process = subprocess.Popen(*args, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process = subprocess.Popen(*args, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = process.communicate()
         output = out + err
         return_code = process.wait()
@@ -82,6 +88,7 @@ class StartAppSyncTest(unittest.TestCase):
         dublicate_repo_cmd = "cp -R {0} {1}"\
             .format(old_repo_path, new_repo_path)
 
+        os.system("rm -rf {0}".format(new_repo_path))
         os.system(dublicate_repo_cmd)
 
         app = App(repo=new_repo_path)
@@ -95,10 +102,16 @@ class StartAppSyncTest(unittest.TestCase):
 
         os.system("rm -rf {0}".format(new_repo_path))
 
-    def test_run_startappsync_in_dir_without_gitrepo(self):
+    def test_run_startappsync_with_non_existing_dir(self):
         os.environ['STARTAPPSYNC_TEST_CWD'] = '/some/not/existing/dir'
         result = self.cmd(['bin/startappsync'])
         self.assertRegexpMatches(result['output'], "Uuuups ... the directory you are looking for is not exist!")
+        self.assertEqual(result['return_code'], 1)
+
+    def test_run_startappsync_in_dir_without_gitrepo(self):
+        os.environ['STARTAPPSYNC_TEST_CWD'] = self.empty_dir
+        result = self.cmd(['bin/startappsync'])
+        self.assertRegexpMatches(result['output'], "Uuuups ... there isn't git repo here")
         self.assertEqual(result['return_code'], 1)
 
 
@@ -126,6 +139,29 @@ class StartAppSyncTest(unittest.TestCase):
         self.assertRegexpMatches(result['output'], 'Sorry Dude')
         # self.assertRegexpMatches(result['output'], '535650470fe7e618ef000272@appname-appnamespace.sapp.io:~/app-root/repo')
         self.assertEqual(result['return_code'], 1)
+
+
+    def test_set_rhc_details_in_gitconfig(self):
+        old_repo_path = self.dummy_repo_with_many_remotes
+        new_repo_path = "{0}repo_test_set_rhc_in_gitconfig"\
+            .format(self.no_repo)
+
+        os.system("rm -rf {0}".format(new_repo_path))
+        dublicate_repo_cmd = "cp -R {0} {1}"\
+            .format(old_repo_path, new_repo_path)
+
+        os.system(dublicate_repo_cmd)
+
+        os.environ['STARTAPPSYNC_TEST_CWD'] = new_repo_path
+        result = self.cmd(['bin/startappsync', '--set-remote', 'origin'])
+        self.assertRegexpMatches(result['output'], "Remote with name 'origin' was successfuly added!")
+
+        app = App(repo=new_repo_path)
+        self.assertEqual('repo-user', app.app_id())
+        self.assertEqual('repo', app.app_name())
+        self.assertEqual('host', app.app_namespace())
+
+        os.system("rm -rf {0}".format(new_repo_path))
 
 
     # def test_run_startappsync_with_repo_argument_with_nonexisting_repo(self):

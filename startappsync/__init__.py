@@ -80,6 +80,17 @@ class App():
         for detail in app_details:
             config.set_value('rhc', detail, app_details[detail])
 
+    def set_remote(self, remote_name):
+        remotes = self.remotes()
+        for remote in remotes:
+            if remote.name == remote_name:
+                details = self.details_from_url(remote.url)
+                self.set_rhc(details)
+
+                return True
+
+        return False
+
     def is_app(self):
         return self.app_id()
 

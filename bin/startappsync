@@ -3,11 +3,12 @@
     startappsync [options]
 
 Options:
-  -h --help                show this help message and exit
-  --repo REPOPATH          the path that will watch
-  --from FROMPATH          the path that will watch
-  --to SSH_URL             ssh url to sync with
-  --version                show version and exit
+  -h --help                  show this help message and exit
+  --repo REPOPATH            the path that will watch
+  --from FROMPATH            the path that will watch
+  --to SSH_URL               ssh url to sync with
+  --set-remote REMOTENAME    ssh url to sync with
+  --version                  show version and exit
 
 """
 
@@ -15,11 +16,26 @@ import sys, os, time
 sys.path.insert(0, os.path.dirname(os.getcwd()))
 sys.path.insert(0, os.path.dirname(os.getcwd()) + '/startappsync')
 
-from git.exc import NoSuchPathError
+from git.exc import NoSuchPathError, InvalidGitRepositoryError
 
 from startappsync import App, StatappSyncHandler, version, rsync
 from watchdog.observers import Observer
 from docopt import docopt
+from termcolor import colored, cprint
+
+def print_error(message):
+    cprint(message, 'red')
+
+def print_success(message):
+    cprint(message, 'green')
+
+def set_remote_to_git_config(remote_name):
+    if app.set_remote(remote_name):
+        print_success("Remote with name '{0}' was successfuly added!".format(remote_name))
+        sys.exit(0)
+    else:
+        print_error("Error: There is something shitty with this remote!")
+        sys.exit(1)
 
 if __name__ == '__main__':
     arguments = docopt(__doc__, version=version)
@@ -52,13 +68,18 @@ if __name__ == '__main__':
     if use_app:
         try:
             app = App(repo=src)
+
             if app.has_repo():
                 # Let check if this repo has an app?
                 if app.is_app():
                     src = app.src()
                     dest = app.dest()
                 else:
-                    print("\nSorry Dude :( ... But I can't find StartApp App in the git config!\n")
+                    remote_name = arguments['--set-remote']
+                    if remote_name != None:
+                        set_remote_to_git_config(remote_name)
+
+                    print_error("\nSorry Dude :( ... But I can't find StartApp App in the git config!\n")
                     if app.has_remotes():
                         print("I fond these StartApp repos:\n")
                         remotes = app.remotes()
@@ -66,24 +87,31 @@ if __name__ == '__main__':
                             print("{0} - {1}".format(remote.name, remote.url))
 
                         print("\nIf you want to use some of them you have to type:")
-                        print("startappsync --set-remote <remote-name>\n")
+                        print("---")
+                        print("startappsync --set-remote <remote-name>")
+                        print("--- or if you are using '--repo' argument ---")
+                        print("startappsync --repo <repo/path> --set-remote <remote-name>")
+                        print("---\n")
 
                     sys.exit(1)
             else:
-                print("Uuuups ... I can't find StartApp Git repo here!")
+                print_error("Uuuups ... I can't find StartApp Git repo here!")
                 print("If tyou want to see the usage please type this:\n")
                 print(" startappsync --help\n")
                 sys.exit(1)
 
+        except InvalidGitRepositoryError:
+            print_error("\nUuuups ... there isn't git repo here :(")
+            sys.exit(1)
         except NoSuchPathError:
-            print("Uuuups ... the directory you are looking for is not exist! :(")
+            print_error("Uuuups ... the directory you are looking for is not exist! :(")
             sys.exit(1)
 
     src = os.path.abspath(src)
     src = "{0}/".format(src)
 
-    print("Hi Dude! I am StartAppSync :)")
-    print("Now I am looking for changes in '{0}' and ... \n I will sync them to '{1}'" \
+    print_success("Hi Dude! I am StartAppSync :)")
+    print_success("Now I am looking for changes in '{0}' and ... \nI will sync them to '{1}'" \
         .format(src, dest))
 
     if not startappsync_test_env:
