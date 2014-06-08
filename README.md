@@ -48,6 +48,34 @@ $ sudo aptitude install libyaml-dev
 On Windows, please install [PyYAML](http://www.pyyaml.org/) using the binaries they provide.
 
 
+# Testing
+
+### Setup testing environemnt
+
+```bash
+$ git clone https://github.com/mignev/startappsync.git
+$ cd startappsync
+$ python setup.py install
+$ cd tests
+$ bash setup_fixtures.sh
+```
+
+### Testing
+
+Just make your changes add tests and run them:
+
+```bash
+$ cd startappsync
+$ nosetests --rednose
+```
+
+if you are using `develo`:
+
+```bash
+$ cd startappsync
+$ develo tests
+```
+
 
 # Contributing
 Fork the [startappsync repo on GitHub](https://github.com/mignev/startappsync), make your super duper awesome changes :) and send me a Pull Request. :)
