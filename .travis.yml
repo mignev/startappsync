@@ -9,6 +9,7 @@ install:
   - python setup.py install
 script:
   - cd tests
+  - bash setup_fixtures.sh
   - ls -al fixtures
   - ls -al fixtures/dummyrepo_with_many_remotes
   - ln -s ../startappsync startappsync

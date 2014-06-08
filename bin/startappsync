@@ -29,6 +29,9 @@ def print_error(message):
 def print_success(message):
     cprint(message, 'green')
 
+def green(text):
+    return colored(text, 'green')
+
 def set_remote_to_git_config(remote_name):
     if app.set_remote(remote_name):
         print_success("Remote with name '{0}' was successfuly added!".format(remote_name))
@@ -45,8 +48,6 @@ if __name__ == '__main__':
     startappsync_test_cwd = os.getenv("STARTAPPSYNC_TEST_CWD", None)
 
     if arguments['--from'] == None and arguments['--repo'] == None:
-        current_working_dir = os.getcwd()
-
         """
             FIXME: This is used by tests. I don't like this solution
             I have to fix it!
@@ -54,6 +55,7 @@ if __name__ == '__main__':
         if startappsync_test_env and startappsync_test_cwd:
             src = startappsync_test_cwd
         else:
+            current_working_dir = os.getcwd()
             src = current_working_dir
 
     if arguments['--repo'] != None:
@@ -70,6 +72,7 @@ if __name__ == '__main__':
             app = App(repo=src)
 
             if app.has_repo():
+
                 # Let check if this repo has an app?
                 if app.is_app():
                     src = app.src()
@@ -84,14 +87,11 @@ if __name__ == '__main__':
                         print("I fond these StartApp repos:\n")
                         remotes = app.remotes()
                         for remote in remotes:
-                            print("{0} - {1}".format(remote.name, remote.url))
+                            print("    {0} - {1}".format(green(remote.name), remote.url))
 
-                        print("\nIf you want to use some of them you have to type:")
-                        print("---")
-                        print("startappsync --set-remote <remote-name>")
-                        print("--- or if you are using '--repo' argument ---")
-                        print("startappsync --repo <repo/path> --set-remote <remote-name>")
-                        print("---\n")
+                        print("\nIf you want to use some of them you have to type:\n")
+                        print("    startappsync --set-remote {0}".format(green("<remote-name>")))
+                        print("    startappsync --repo <repo/path> --set-remote {0}\n".format(green("<remote-name>")))
 
                     sys.exit(1)
             else:
@@ -110,9 +110,11 @@ if __name__ == '__main__':
     src = os.path.abspath(src)
     src = "{0}/".format(src)
 
-    print_success("Hi Dude! I am StartAppSync :)")
-    print_success("Now I am looking for changes in '{0}' and ... \nI will sync them to '{1}'" \
-        .format(src, dest))
+    print("\nHi Dude! I'm StartAppSync :)\n")
+    print("Now I'm watching here:")
+    print_success("    {0}\n".format(src))
+    print("I will sync here:")
+    print_success("    {0}\n".format(dest))
 
     if not startappsync_test_env:
         rsync(src, dest)
