@@ -14,21 +14,30 @@ except ImportError:
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
+tests_require = ['nose', 'rednose']
+
 distutils.core.setup(name='StartAppSync',
-      version='0.0.1',
-      description='Easy way to use existing JSON, XML or YAML config files from bash shell/scripts',
+      version="0.0.3",
+      description="""
+      StartAppSync will sync your code with your cloud environment on the StartApp Cloud.
+      You can develop your cloud apps locally with editors and tools you love without any need to
+      install php, ruby, node, python, mysql or mongodb on your computer :)
+      """,
       author='Marian Ignev',
       author_email='m@ignev.net',
       url='http://github.com/mignev/startappsync',
       packages=['startappsync'],
       long_description=read('README.md'),
       package_dir={"startappsync":"startappsync"},
+
+      tests_require = tests_require,
+      extras_require={'test': tests_require},
+
       install_requires = [
       'docopt',
       'watchdog',
       'pathtools',
       'termcolor',
-      'gitpython==0.3.2.RC1'
       ],
       scripts= ["bin/startappsync"],
       classifiers=[

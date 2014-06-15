@@ -3,7 +3,6 @@ from startappsync import App
 
 import os
 import unittest
-import mock
 import re
 import subprocess
 import sys
@@ -28,7 +27,7 @@ class StartAppSyncTest(TestCaseBase):
             cwd = os.getcwd()
 
         self.no_repo = '{0}/fixtures/'.format(cwd)
-        self.empty_dir = '/tmp/empty_dir_with_no_git_repo'
+        self.empty_dir = '{0}empty_dir_with_no_git_repo'.format(self.no_repo)
         self.dummy_repo = '{0}/fixtures/dummyrepo'.format(cwd)
         self.dummy_repo_without_rhc_conf = '{0}/fixtures/dummyrepo_without_rhc_conf'.format(cwd)
         self.dummy_repo_with_one_remote = '{0}/fixtures/dummyrepo_with_one_remote'.format(cwd)
@@ -48,10 +47,6 @@ class StartAppSyncTest(TestCaseBase):
         result = { "output": output, "return_code": return_code }
         return result
 
-    def test_app_has_repo(self):
-        app = App(repo=self.dummy_repo)
-        self.assertTrue(app.has_repo())
-
     def test_app_has_remotes_with_repo_without_remotes(self):
         app = App(repo=self.dummy_repo)
         self.assertFalse(app.has_remotes())
@@ -63,10 +58,6 @@ class StartAppSyncTest(TestCaseBase):
     def test_app_has_remotes_with_repo_with_many_remote(self):
         app = App(repo=self.dummy_repo_with_many_remotes)
         self.assertTrue(app.has_remotes())
-
-    def test_app_has_repo_with_none_existing_path(self):
-        app = App(repo=self.no_repo)
-        self.assertFalse(app.has_repo())
 
     def test_app_appname_from_git(self):
         app = App(repo=self.dummy_repo)
@@ -85,11 +76,13 @@ class StartAppSyncTest(TestCaseBase):
 
     def test_get_app_details_from_ssh_url(self):
         app = App(repo=self.dummy_repo_with_many_remotes)
-        remote_url = app.remotes()[0].url
+
+        remote_url = app.remotes()[0]['url']
         app_details = app.details_from_url(remote_url)
         self.assertEqual('repo-user', app_details['app-id'])
         self.assertEqual('repo', app_details['app-name'])
         self.assertEqual('host', app_details['domain-name'])
+
 
     def test_set_rhc_details_in_gitconfig(self):
         old_repo_path = self.dummy_repo_with_many_remotes
@@ -103,7 +96,7 @@ class StartAppSyncTest(TestCaseBase):
         os.system(dublicate_repo_cmd)
 
         app = App(repo=new_repo_path)
-        remote_url = app.remotes()[0].url
+        remote_url = app.remotes()[0]['url']
         app_details = app.details_from_url(remote_url)
         app.set_rhc(app_details)
 
@@ -122,9 +115,9 @@ class StartAppSyncTest(TestCaseBase):
     def test_run_startappsync_in_dir_without_gitrepo(self):
         os.environ['STARTAPPSYNC_TEST_CWD'] = self.empty_dir
         result = self.cmd(['bin/startappsync'])
-        self.assertRegexpMatches(result['output'], "Uuuups ... there isn't git repo here")
+        print result['output']
+        self.assertRegexpMatches(result['output'], "Uuuups ... I can't find Git repo here!")
         self.assertEqual(result['return_code'], 1)
-
 
     def test_run_startappsync_in_dir_with_gitrepo(self):
         os.environ['STARTAPPSYNC_TEST_CWD'] = self.dummy_repo
@@ -148,11 +141,11 @@ class StartAppSyncTest(TestCaseBase):
         result = self.cmd(['bin/startappsync'])
 
         self.assertRegexpMatches(result['output'], 'Sorry Dude')
-        # self.assertRegexpMatches(result['output'], '535650470fe7e618ef000272@appname-appnamespace.sapp.io:~/app-root/repo')
+        self.assertRegexpMatches(result['output'], '- ssh://repo-user@repo-host.sapp.io/~/git/repo.git/\n')
+        self.assertRegexpMatches(result['output'], 'If you want to use some of them you have to type:')
         self.assertEqual(result['return_code'], 1)
 
-
-    def test_set_rhc_details_in_gitconfig(self):
+    def test_set_rhc_details_in_gitconfig_from_cli(self):
         old_repo_path = self.dummy_repo_with_many_remotes
         new_repo_path = "{0}repo_test_set_rhc_in_gitconfig"\
             .format(self.no_repo)

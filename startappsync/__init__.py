@@ -2,12 +2,12 @@ import subprocess
 import os
 import logging
 
-from git import Repo
 from re import search
 from watchdog.events import FileSystemEventHandler
+from gitconfig.core import GitConfig, GitRepoNotFoundError
 
-version = "0.0.1"
-version_info = (0, 0, 1)
+version = "0.0.3"
+version_info = (0, 0, 3)
 
 def cmd(cmd):
     process = subprocess.Popen(cmd,
@@ -25,21 +25,17 @@ class App():
     def __init__(self, **kwargs):
         current_working_dir = os.getcwd()
         self.repo = kwargs.get('repo', current_working_dir)
-        self._git = Repo(self.repo)
-        self._git_config = self._git.config_reader()
+
+        self._git_config = GitConfig(path=self.repo)
 
     def _git_config_get(self, params):
         conf = self._git_config
         try:
             secion, param = params.split('.')
-            result = conf.get_value(secion, param)
+            result = conf.get(secion, param)
         except:
             result = None
         return result
-
-    def has_repo(self):
-        git_repo = "{0}/.git".format(self.repo)
-        return os.path.isdir(git_repo)
 
     def has_remotes(self):
         remotes = self.remotes()
@@ -47,7 +43,8 @@ class App():
         result = False
         if has_remotes > 0:
             for remote in remotes:
-                if search(r'sapp.io', remote.url):
+                remote_url = remote['url']
+                if search(r'sapp.io', remote_url):
                     result = True
                     break
 
@@ -55,10 +52,14 @@ class App():
 
     def remotes(self):
         result = []
-        remotes = self._git.remotes
+        remotes = self._git_config.remotes
         for remote in remotes:
-            if search(r'sapp.io', remote.url):
-                result.append(remote)
+            remote_url = remotes[remote]['url']
+            if search(r'sapp.io', remote_url):
+                the_remote = remotes[remote]
+                the_remote['name'] = remote
+                result.append(the_remote)
+
         return result
 
     def details_from_url(self, url):
@@ -72,21 +73,20 @@ class App():
         return result
 
     def set_rhc(self, app_details):
-        config = self._git.config_writer()
-
-        if not 'rhc' in config.sections():
-            config.add_section('rhc')
+        config = self._git_config
 
         for detail in app_details:
-            config.set_value('rhc', detail, app_details[detail])
+            config.set('rhc', detail, app_details[detail])
+
+        config.save()
 
     def set_remote(self, remote_name):
         remotes = self.remotes()
-        for remote in remotes:
-            if remote.name == remote_name:
-                details = self.details_from_url(remote.url)
-                self.set_rhc(details)
 
+        for remote in remotes:
+            if remote['name'] == remote_name:
+                details = self.details_from_url(remote['url'])
+                self.set_rhc(details)
                 return True
 
         return False

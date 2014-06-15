@@ -38,6 +38,7 @@ tests/bin
 tests/startappsync
 
 venv
+venv3
 
 .DS_Store
 dummyrepo
