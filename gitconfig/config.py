@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # config.py - Reading and writing Git config files
 # Copyright (C) 2011-2013 Jelmer Vernooij <jelmer@samba.org>
 #
@@ -27,15 +28,34 @@ TODO:
 import errno
 import os
 import re
+import sys
 
-from collections import (
-    OrderedDict,
-    MutableMapping,
-    )
+if sys.version_info < (2, 7):
+    from ordereddict import OrderedDict
+    from collections import MutableMapping
+else:
+    from collections import (
+        OrderedDict,
+        MutableMapping,
+        )
 
 
 from gitconfig.file import GitFile
 
+try:
+    unicode = unicode
+except NameError:
+    # 'unicode' is undefined, must be Python 3
+    str = str
+    unicode = str
+    bytes = bytes
+    basestring = (str,bytes)
+else:
+    # 'unicode' exists, must be Python 2
+    str = str
+    unicode = unicode
+    bytes = str
+    basestring = basestring
 
 class Config(object):
     """A Git configuration."""
@@ -151,10 +171,14 @@ class ConfigDict(Config, MutableMapping):
         self._values.setdefault(section, OrderedDict())[name] = value
 
     def iteritems(self, section):
-        return self._values.get(section, OrderedDict()).iteritems()
+        return self._values.get(section, OrderedDict()).items()
 
     def itersections(self):
         return self._values.keys()
+
+    def keys(self):
+        return [key for key in self._values.keys()]
+
 
 
 def _format_string(value):
@@ -239,6 +263,7 @@ class ConfigFile(ConfigDict):
         section = None
         setting = None
         for lineno, line in enumerate(f.readlines()):
+            line = line.decode('utf-8')
             line = line.lstrip()
             if setting is None:
                 if len(line) > 0 and line[0] == "[":
@@ -325,18 +350,21 @@ class ConfigFile(ConfigDict):
 
     def write_to_file(self, f):
         """Write configuration to a file-like object."""
-        for section, values in self._values.iteritems():
+        for section, values in self._values.items():
             try:
                 section_name, subsection_name = section
             except ValueError:
                 (section_name, ) = section
                 subsection_name = None
             if subsection_name is None:
-                f.write("[%s]\n" % section_name)
+                string = "[%s]\n" % section_name
+                f.write(string.encode('utf-8'))
             else:
-                f.write("[%s \"%s\"]\n" % (section_name, subsection_name))
-            for key, value in values.iteritems():
-                f.write("\t%s = %s\n" % (key, _escape_value(value)))
+                string = "[%s \"%s\"]\n" % (section_name, subsection_name)
+                f.write(string.encode('utf-8'))
+            for key, value in values.items():
+                string = "\t%s = %s\n" % (key, _escape_value(value))
+                f.write(string.encode('utf-8'))
 
 
 class StackedConfig(Config):

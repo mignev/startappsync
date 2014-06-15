@@ -29,6 +29,7 @@ pushd fixtures
 
   cd dummyrepo_with_many_remotes
   git remote add origin ssh://repo-user@repo-host.sapp.io/~/git/repo.git/
-  git remote add origin1 ssh://repo-user1@repo-host1.sapp.io/~/git/repo1.git/
-  git remote add origin2 ssh://repo-user2@repo-host2.sapp.io/~/git/repo2.git/
+  git remote add origin1 ssh://repo-user1@repo1-host1.sapp.io/~/git/repo1.git/
+  git remote add origin2 ssh://repo-user2@repo2-host2.sapp.io/~/git/repo2.git/
+  cat .git/config
 popd

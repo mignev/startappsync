@@ -11,7 +11,7 @@ class TestCaseBase(unittest.TestCase):
 
     # HACK: Backport for Python 2.6.
     def assertRegexpMatches(self, value, regexp):
-        self.assertTrue(re.search(regexp, value))
+        self.assertTrue(re.search(regexp, value.decode('utf-8')))
 
     # HACK: Backport for Python 2.6.
     def assertNotIn(self, value, container):
@@ -76,7 +76,6 @@ class StartAppSyncTest(TestCaseBase):
 
     def test_get_app_details_from_ssh_url(self):
         app = App(repo=self.dummy_repo_with_many_remotes)
-
         remote_url = app.remotes()[0]['url']
         app_details = app.details_from_url(remote_url)
         self.assertEqual('repo-user', app_details['app-id'])
@@ -115,7 +114,6 @@ class StartAppSyncTest(TestCaseBase):
     def test_run_startappsync_in_dir_without_gitrepo(self):
         os.environ['STARTAPPSYNC_TEST_CWD'] = self.empty_dir
         result = self.cmd(['bin/startappsync'])
-        print result['output']
         self.assertRegexpMatches(result['output'], "Uuuups ... I can't find Git repo here!")
         self.assertEqual(result['return_code'], 1)
 

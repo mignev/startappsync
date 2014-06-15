@@ -1,10 +1,20 @@
 import os
+import sys
 from re import search
 
 from gitconfig.config import (
     ConfigDict,
     ConfigFile,
     )
+
+if sys.version_info < (2, 7):
+    from ordereddict import OrderedDict
+    from collections import MutableMapping
+else:
+    from collections import (
+        OrderedDict,
+        MutableMapping,
+        )
 
 class GitRepoNotFoundError(Exception): pass
 
@@ -79,7 +89,7 @@ class GitConfig():
     @property
     def remotes(self):
         config_sections = self.config.items()
-        remotes = {}
+        remotes = OrderedDict()
 
         for section in config_sections:
             section_type = section[0][0]

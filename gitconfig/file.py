@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # file.py -- Safe access to git files
 # Copyright (C) 2010 Google, Inc.
 #

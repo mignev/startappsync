@@ -3,6 +3,12 @@
 from __future__ import with_statement
 import distutils.core
 import os
+import sys
+
+specific_install_requires = []
+
+if sys.version_info < (2, 7):
+    specific_install_requires.append('ordereddict')
 
 # Importing setuptools adds some features like "setup.py develop", but
 # it's optional so swallow the error if it's not there.
@@ -38,7 +44,7 @@ distutils.core.setup(name='StartAppSync',
       'watchdog',
       'pathtools',
       'termcolor',
-      ],
+      ] + specific_install_requires,
       scripts= ["bin/startappsync"],
       classifiers=[
           'Development Status :: 4 - Beta',

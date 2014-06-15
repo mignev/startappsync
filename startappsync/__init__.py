@@ -44,7 +44,7 @@ class App():
         if has_remotes > 0:
             for remote in remotes:
                 remote_url = remote['url']
-                if search(r'sapp.io', remote_url):
+                if search('sapp.io', remote_url):
                     result = True
                     break
 
@@ -55,7 +55,7 @@ class App():
         remotes = self._git_config.remotes
         for remote in remotes:
             remote_url = remotes[remote]['url']
-            if search(r'sapp.io', remote_url):
+            if search('sapp.io', remote_url):
                 the_remote = remotes[remote]
                 the_remote['name'] = remote
                 result.append(the_remote)
@@ -63,7 +63,7 @@ class App():
         return result
 
     def details_from_url(self, url):
-        details = search(r'//(.*)@(.*)-(.*).sapp', url)
+        details = search('//(.*)@(.*)-(.*).sapp', url)
         app_id, app_name, app_namespace = details.groups()
         result = {
             'app-id': app_id,

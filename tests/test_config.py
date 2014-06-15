@@ -39,6 +39,8 @@ from tests import TestCase, unittest
 class ConfigFileTests(TestCase):
 
     def from_file(self, text):
+        # text = bytes(text, 'UTF-8')
+        text = text.encode("utf-8")
         return ConfigFile.from_file(BytesIO(text))
 
     def test_empty(self):
@@ -49,10 +51,10 @@ class ConfigFileTests(TestCase):
 
     def test_default_config(self):
         cf = self.from_file("""[core]
-	repositoryformatversion = 0
-	filemode = true
-	bare = false
-	logallrefupdates = true
+    repositoryformatversion = 0
+    filemode = true
+    bare = false
+    logallrefupdates = true
 """)
         self.assertEqual(ConfigFile({("core", ): {
             "repositoryformatversion": "0",
@@ -133,21 +135,21 @@ class ConfigFileTests(TestCase):
         c = ConfigFile()
         f = BytesIO()
         c.write_to_file(f)
-        self.assertEqual("", f.getvalue())
+        self.assertEqual(b"", f.getvalue())
 
     def test_write_to_file_section(self):
         c = ConfigFile()
         c.set(("core", ), "foo", "bar")
         f = BytesIO()
         c.write_to_file(f)
-        self.assertEqual("[core]\n\tfoo = bar\n", f.getvalue())
+        self.assertEqual(b"[core]\n\tfoo = bar\n", f.getvalue())
 
     def test_write_to_file_subsection(self):
         c = ConfigFile()
         c.set(("branch", "blie"), "foo", "bar")
         f = BytesIO()
         c.write_to_file(f)
-        self.assertEqual("[branch \"blie\"]\n\tfoo = bar\n", f.getvalue())
+        self.assertEqual(b"[branch \"blie\"]\n\tfoo = bar\n", f.getvalue())
 
     def test_same_line(self):
         cf = self.from_file("[branch.foo] foo = bar\n")
@@ -175,6 +177,7 @@ class ConfigDictTests(TestCase):
 
     def test_dict(self):
         cd = ConfigDict()
+
         cd.set(("core", ), "foo", "bla")
         cd.set(("core2", ), "foo", "bloe")
 

@@ -41,7 +41,7 @@ class ConfigFileTests(TestCase):
         self.no_repo = '{0}/fixtures/'.format(cwd)
         self.dummy_repo_with_many_remotes = '{0}/fixtures/dummyrepo_with_many_remotes'.format(cwd)
 
-        many_remotes_conf = self.config_with_many_remotes()
+        many_remotes_conf = self.config_with_many_remotes().encode("utf-8")
         self.git_config = GitConfig(file=BytesIO(many_remotes_conf))
 
     def test_gitconfig_has_remotes(self):
