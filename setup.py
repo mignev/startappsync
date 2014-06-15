@@ -23,7 +23,7 @@ def read(fname):
 tests_require = ['nose', 'rednose']
 
 distutils.core.setup(name='StartAppSync',
-      version="0.0.3",
+      version="0.0.5",
       description="""
       StartAppSync will sync your code with your cloud environment on the StartApp Cloud.
       You can develop your cloud apps locally with editors and tools you love without any need to

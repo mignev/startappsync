@@ -38,7 +38,12 @@ tests/bin
 tests/startappsync
 
 venv
+venv26
+venv26
 venv3
+venv32
+venv33
+venv34
 
 .DS_Store
 dummyrepo

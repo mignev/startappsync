@@ -172,14 +172,11 @@ class ConfigFileTests(TestCase):
 
     def test_gitconfig_open_not_existing_path(self):
         repo = '/some/fake/path'
-        with self.assertRaises(IOError):
-            GitConfig(path=repo)
+        self.assertRaises(IOError, lambda: GitConfig(path=repo))
 
     def test_gitconfig_open_path_of_not_existing_repo(self):
         repo = self.no_repo
-        with self.assertRaises(GitRepoNotFoundError):
-            GitConfig(path=repo)
-
+        self.assertRaises(GitRepoNotFoundError, lambda: GitConfig(path=repo))
 
 
 if __name__ == "__main__":

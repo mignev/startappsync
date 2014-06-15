@@ -48,6 +48,10 @@ def get_safe_env(env=None):
 
 class TestCase(_TestCase):
 
+    def __init__(self, methodName='runTest'):
+        super(TestCase, self).__init__(methodName)
+        self.original_env = os.environ
+
     def makeSafeEnv(self):
         """Create environment with homedirectory-related variables stripped.
 
@@ -55,10 +59,8 @@ class TestCase(_TestCase):
         side-effects caused by the user's ~/.gitconfig and other
         files in their home directory.
         """
-        old_env = os.environ
-        def restore():
-            os.environ = old_env
-        self.addCleanup(restore)
+        os.environ = self.original_env
+
         new_env = dict(os.environ)
         for e in ['HOME', 'HOMEPATH', 'USERPROFILE']:
             new_env[e] = '/nosuchdir'
@@ -67,6 +69,11 @@ class TestCase(_TestCase):
     def setUp(self):
         super(TestCase, self).setUp()
         self.makeSafeEnv()
+
+    def tearDown(self):
+        super(TestCase, self).tearDown()
+        os.environ = self.original_env
+
 
 
 class BlackboxTestCase(TestCase):
