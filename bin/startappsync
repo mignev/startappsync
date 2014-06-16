@@ -33,6 +33,7 @@ from startappsync import App, StatappSyncHandler, version, rsync, GitRepoNotFoun
 from watchdog.observers import Observer
 from docopt import docopt
 from termcolor import colored, cprint
+from re import search
 
 def print_error(message):
     cprint(message, 'red')
@@ -118,10 +119,13 @@ if __name__ == '__main__':
     src = "{0}/".format(src)
 
     print("\nHi Dude! I'm StartAppSync :)\n")
-    print("Now I'm watching here:")
+    print("Now I'm watching for changes here:")
     print_success("    {0}\n".format(src))
-    print("I will sync here:")
+    print("I will sync them there:")
     print_success("    {0}\n".format(dest))
+    print("So that you can enjoy them here:")
+    url = search('@(.+):~', dest).groups()[0]
+    print_success("    http://{0}/\n".format(url))
 
     if not startappsync_test_env:
         rsync(src, dest)
