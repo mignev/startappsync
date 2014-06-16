@@ -17,6 +17,8 @@ try:
 except ImportError:
     pass
 
+from setuptools import find_packages
+
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
@@ -32,9 +34,9 @@ distutils.core.setup(name='StartAppSync',
       author='Marian Ignev',
       author_email='m@ignev.net',
       url='http://github.com/mignev/startappsync',
-      packages=['startappsync'],
+      packages=find_packages(exclude=["tests"]),
       long_description=read('README.md'),
-      package_dir={"startappsync":"startappsync"},
+      package_dir={ "startappsync":"startappsync" },
 
       tests_require = tests_require,
       extras_require={'test': tests_require},
@@ -56,5 +58,6 @@ distutils.core.setup(name='StartAppSync',
           'Programming Language :: Python :: 2',
           'Programming Language :: Python :: 2.7',
           'Topic :: System :: Shells',
-          'Topic :: Utilities'],
+          'Topic :: Utilities'
+      ],
      )
