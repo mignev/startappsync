@@ -110,4 +110,3 @@ This is the first alpha release. So a lot of thinks may will be crappy. Please i
 
 #Copyright
 Copyright (c) 2014 Marian Ignev. See LICENSE for further details.
-
