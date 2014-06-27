@@ -45,6 +45,7 @@ class StartAppSyncTest(TestCaseBase):
         output = out + err
         return_code = process.wait()
         result = { "output": output, "return_code": return_code }
+        print(output)
         return result
 
     def test_app_has_remotes_with_repo_without_remotes(self):
@@ -156,7 +157,6 @@ class StartAppSyncTest(TestCaseBase):
 
         os.environ['STARTAPPSYNC_TEST_CWD'] = new_repo_path
         result = self.cmd(['bin/startappsync', '--set-remote', 'origin'])
-        print result['output']
         self.assertRegexpMatches(result['output'], "Remote with name 'origin' was successfuly added!")
 
         app = App(repo=new_repo_path)

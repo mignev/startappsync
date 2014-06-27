@@ -119,11 +119,11 @@ def directory_not_exist():
 
 def start_syncing(src, dest, version):
     br()
-    p.text('v{}'.format(version)).color('white').text_align.right.render()
+    p.text('v{0}'.format(version)).color('white').text_align.right.render()
     heading('  StartAppSync', 'big', 'blue')
     br()
 
-    start_syncing = "{}Start Syncing".format(" "*24)
+    start_syncing = "{0}Start Syncing".format(" "*24)
     heading(start_syncing, 'italic', 'green')
 
     p_white("Now I'm watching for changes here:")

@@ -61,7 +61,7 @@ class CLElement():
         return self
 
     def render(self):
-        print self.output
+        print(self.output)
 
     def __str__(self):
         return self.output
