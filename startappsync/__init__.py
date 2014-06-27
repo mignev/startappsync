@@ -6,8 +6,8 @@ from re import search
 from watchdog.events import FileSystemEventHandler
 from gitconfig.core import GitConfig, GitRepoNotFoundError
 
-version = "0.0.5"
-version_info = (0, 0, 5)
+version = "0.0.7"
+version_info = (0, 0, 7)
 
 def cmd(cmd):
     process = subprocess.Popen(cmd,

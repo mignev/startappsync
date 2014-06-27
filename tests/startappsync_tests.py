@@ -108,7 +108,7 @@ class StartAppSyncTest(TestCaseBase):
     def test_run_startappsync_with_non_existing_dir(self):
         os.environ['STARTAPPSYNC_TEST_CWD'] = '/some/not/existing/dir'
         result = self.cmd(['bin/startappsync'])
-        self.assertRegexpMatches(result['output'], "Uuuups ... the directory you are looking for is not exist!")
+        self.assertRegexpMatches(result['output'], "The directory you are looking for is not exist!")
         self.assertEqual(result['return_code'], 1)
 
     def test_run_startappsync_in_dir_without_gitrepo(self):
@@ -121,9 +121,9 @@ class StartAppSyncTest(TestCaseBase):
         os.environ['STARTAPPSYNC_TEST_CWD'] = self.dummy_repo
         result = self.cmd(['bin/startappsync'])
 
-        self.assertRegexpMatches(result['output'], 'Hi Dude!')
         self.assertRegexpMatches(result['output'], self.dummy_repo)
         self.assertRegexpMatches(result['output'], '535650470fe7e618ef000272@appname-appnamespace.sapp.io:~/app-root/repo')
+        self.assertRegexpMatches(result['output'], 'appname-appnamespace.sapp.io')
         self.assertEqual(result['return_code'], 0)
 
     def test_run_startappsync_in_dir_with_gitrepo_but_without_rhc_in_conf(self):
@@ -156,6 +156,7 @@ class StartAppSyncTest(TestCaseBase):
 
         os.environ['STARTAPPSYNC_TEST_CWD'] = new_repo_path
         result = self.cmd(['bin/startappsync', '--set-remote', 'origin'])
+        print result['output']
         self.assertRegexpMatches(result['output'], "Remote with name 'origin' was successfuly added!")
 
         app = App(repo=new_repo_path)

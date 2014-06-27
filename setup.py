@@ -42,12 +42,16 @@ distutils.core.setup(name='StartAppSync',
       extras_require={'test': tests_require},
 
       install_requires = [
-      'docopt',
-      'watchdog',
-      'pathtools',
-      'termcolor',
+        'docopt',
+        'watchdog',
+        'pathtools',
+        'termcolor',
+        'colorama',
+        'pyfiglet',
       ] + specific_install_requires,
+
       scripts= ["bin/startappsync"],
+
       classifiers=[
           'Development Status :: 4 - Beta',
           'Operating System :: POSIX',
@@ -58,6 +62,6 @@ distutils.core.setup(name='StartAppSync',
           'Programming Language :: Python :: 2',
           'Programming Language :: Python :: 2.7',
           'Topic :: System :: Shells',
-          'Topic :: Utilities'
+          'Topic :: Utilities',
       ],
      )

@@ -30,26 +30,22 @@ sys.path.insert(0, os.path.dirname(os.getcwd()))
 sys.path.insert(0, os.path.dirname(os.getcwd()) + '/startappsync')
 
 from startappsync import App, StatappSyncHandler, version, rsync, GitRepoNotFoundError
+from startappsync import banners
 from watchdog.observers import Observer
 from docopt import docopt
 from termcolor import colored, cprint
+from colorama import init
+from pyfiglet import figlet_format
 from re import search
 
-def print_error(message):
-    cprint(message, 'red')
-
-def print_success(message):
-    cprint(message, 'green')
-
-def green(text):
-    return colored(text, 'green')
+init(strip=not sys.stdout.isatty()) # strip colors if stdout is redirected
 
 def set_remote_to_git_config(remote_name):
     if app.set_remote(remote_name):
-        print_success("Remote with name '{0}' was successfuly added!".format(remote_name))
+        banners.set_remote_success(remote_name)
         sys.exit(0)
     else:
-        print_error("Error: There is something shitty with this remote!")
+        banners.error()
         sys.exit(1)
 
 if __name__ == '__main__':
@@ -92,40 +88,23 @@ if __name__ == '__main__':
                 if remote_name != None:
                     set_remote_to_git_config(remote_name)
 
-                print_error("\nSorry Dude :( ... But I can't find StartApp App in the git config!\n")
+                banners.no_rhc_in_gitconfig()
                 if app.has_remotes():
-                    print("I fond these StartApp repos:\n")
-                    remotes = app.remotes()
-                    for remote in remotes:
-                        print("    {0} - {1}".format(green(remote['name']), remote['url']))
-
-                    print("\nIf you want to use some of them you have to type:\n")
-                    print("    startappsync --set-remote {0}".format(green("<remote-name>")))
-                    print("    startappsync --repo <repo/path> --set-remote {0}\n".format(green("<remote-name>")))
+                    banners.startapp_remotes(app.remotes())
 
                 sys.exit(1)
 
         except GitRepoNotFoundError:
-            print_error("Uuuups ... I can't find Git repo here!")
-            print("If tyou want to see the usage please type this:\n")
-            print(" startappsync --help\n")
+            banners.git_repo_not_found()
             sys.exit(1)
 
         except IOError:
-            print_error("Uuuups ... the directory you are looking for is not exist! :(")
+            banners.directory_not_exist()
             sys.exit(1)
 
-    src = os.path.abspath(src)
-    src = "{0}/".format(src)
+    src = "{0}/".format(os.path.abspath(src))
 
-    print("\nHi Dude! I'm StartAppSync :)\n")
-    print("Now I'm watching for changes here:")
-    print_success("    {0}\n".format(src))
-    print("I will sync them there:")
-    print_success("    {0}\n".format(dest))
-    print("So that you can enjoy them here:")
-    url = search('@(.+):~', dest).groups()[0]
-    print_success("    http://{0}/\n".format(url))
+    banners.start_syncing(src, dest, version)
 
     if not startappsync_test_env:
         rsync(src, dest)
