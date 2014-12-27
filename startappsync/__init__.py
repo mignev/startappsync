@@ -18,7 +18,7 @@ def cmd(cmd):
     return process
 
 def rsync(source, destination):
-    _cmd = 'rsync -ahz --rsh="ssh" --exclude "venv" --exclude "vendor" --delete ' + source + ' ' + destination
+    _cmd = 'rsync -ahz --rsh="ssh" --exclude "venv" --exclude "vendor" ' + source + ' ' + destination
     cmd(_cmd)
 
 class App():
