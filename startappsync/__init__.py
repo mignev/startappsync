@@ -6,8 +6,8 @@ from re import search
 from watchdog.events import FileSystemEventHandler
 from gitconfig.core import GitConfig, GitRepoNotFoundError
 
-version = "0.0.5"
-version_info = (0, 0, 5)
+version = "0.0.6"
+version_info = (0, 0, 6)
 
 def cmd(cmd):
     process = subprocess.Popen(cmd,
@@ -18,7 +18,7 @@ def cmd(cmd):
     return process
 
 def rsync(source, destination):
-    _cmd = 'rsync -ahz --rsh="ssh" --exclude "venv" --exclude "vendor" ' + source + ' ' + destination
+    _cmd = 'rsync -ahz --rsh="ssh" --exclude-from ".startappexclude" ' + source + ' ' + destination
     cmd(_cmd)
 
 class App():
